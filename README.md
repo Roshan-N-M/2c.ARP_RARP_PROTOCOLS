@@ -19,124 +19,70 @@ P
 ## PROGRAM - ARP
 ~~~
 server.py
-import socket
-
-s = socket.socket()
-s.bind(('localhost', 8000))
-s.listen(1)
-
-print("ARP Server Started...")
-c, addr = s.accept()
-print("Connected with:", addr)
-
-# IP Address and MAC Address table
-address = {
-    "165.165.80.80": "6A:08:AA:C2",
-    "165.165.79.1": "8A:BC:E3:FA",
-    "192.168.1.1": "AA:BB:CC:DD"
-}
-
-while True:
-    ip = c.recv(1024).decode()
-
-    if not ip:
-        break
-
-    print("Requested IP Address:", ip)
-
-    if ip in address:
-        mac = address[ip]
-        reply = "MAC Address for " + ip + " is " + mac
-    else:
-        reply = "IP Address Not Found"
-
-    c.send(reply.encode())
-
-c.close()
-s.close()
+import socket 
+s=socket.socket() 
+s.bind(('localhost',8000)) 
+s.listen(5) 
+c,addr=s.accept() 
+address={"165.165.80.80":"6A:08:AA:C2","165.165.79.1":"8A:BC:E3:FA"}; 
+while True: 
+    ip=c.recv(1024).decode() 
+    try: 
+        c.send(address[ip].encode()) 
+    except KeyError: 
+        c.send("Not Found".encode()) 
 
 client.py
-import socket
-
-s = socket.socket()
-s.connect(('localhost', 8000))
-
-print("Connected to ARP Server")
-
-while True:
-    ip = input("Enter IP Address : ")
-
-    if ip.lower() == "exit":
-        break
-
-    s.send(ip.encode())
-
-    result = s.recv(1024).decode()
-    print(result)
-
-s.close()
+import socket 
+s=socket.socket() 
+s.connect(('localhost',8000)) 
+while True: 
+    ip=input("Enter logical Address : ") 
+    s.send(ip.encode()) 
+    print("MAC Address",s.recv(1024).decode()) 
 ~~~
 ## OUPUT - ARP
 CLIENT
-<img width="938" height="167" alt="image" src="https://github.com/user-attachments/assets/b4bf69e2-4306-4318-aa1b-890cde4e73eb" />
+
+<img width="958" height="98" alt="image" src="https://github.com/user-attachments/assets/1429922e-46f4-46d5-9bff-2ec63568f214" />
 
 SERVER
-<img width="951" height="123" alt="image" src="https://github.com/user-attachments/assets/30483419-a254-461f-b172-5c91891f587d" />
+
+<img width="1005" height="67" alt="image" src="https://github.com/user-attachments/assets/1976ae9e-4882-422e-800b-96bcb50d3195" />
 
 ## PROGRAM - RARP
 ~~~
 client.py
-import socket
-
-s = socket.socket()
-s.bind(('localhost', 9000))
-s.listen(5)
-
-print("Waiting for connection...")
-c, addr = s.accept()
-print("Connected with", addr)
-
-address = {
-    "6A:08:AA:C2": "192.168.1.100",
-    "8A:BC:E3:FA": "192.168.1.99"
-}
-
-while True:
-    ip = c.recv(1024).decode()
-
-    if not ip:
-        break
-
-    try:
-        c.send(address[ip].encode())
-    except KeyError:
-        c.send("Not Found".encode())
-
-c.close()
-s.close()
+import socket 
+s=socket.socket() 
+s.connect(('localhost',9000)) 
+while True: 
+    ip=input("Enter MAC Address : ") 
+    s.send(ip.encode()) 
+    print("Logical Address", s.recv(1024).decode()) 
 
 server.py
-
-import socket
-
-s = socket.socket()
-s.connect(('localhost', 9000))
-
-while True:
-    ip = input("Enter MAC Address : ")
-
-    s.send(ip.encode())
-
-    result = s.recv(1024).decode()
-
-    print("Logical Address :", result)
+import socket 
+s=socket.socket() 
+s.bind(('localhost',9000)) 
+s.listen(5) 
+c,addr=s.accept() 
+address={"6A:08:AA:C2":"192.168.1.100","8A:BC:E3:FA":"192.168.1.99"}; 
+while True: 
+    ip=c.recv(1024).decode() 
+    try: 
+        c.send(address[ip].encode()) 
+    except KeyError: 
+        c.send("Not Found".encode()) 
 ~~~
 ## OUPUT -RARP
 CLIENT
-<img width="996" height="117" alt="image" src="https://github.com/user-attachments/assets/9af2a8b5-8974-4f72-995d-413819d97ed6" />
+
+<img width="971" height="106" alt="image" src="https://github.com/user-attachments/assets/b31d8e3e-48be-437e-8c2b-d58c1a7b52b2" />
 
 SERVER
-<img width="974" height="151" alt="image" src="https://github.com/user-attachments/assets/fb6e02d7-a195-4f4a-afe0-99822d01157e" />
+
+<img width="1003" height="97" alt="image" src="https://github.com/user-attachments/assets/3110ad38-fa91-47d7-8d8c-47c706678ed3" />
 
 ## RESULT
 Thus, the python program for simulating ARP protocols using TCP was successfully 
